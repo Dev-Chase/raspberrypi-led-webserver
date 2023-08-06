@@ -25,7 +25,7 @@ fn toggle() -> String {
     unsafe {
         LED_STATUS = !LED_STATUS;
     }
-    format!("{}", get_status().parse::<bool>().unwrap())
+    get_status()
 }
 
 #[get("/status")]
@@ -58,5 +58,5 @@ fn make_cors() -> Cors {
 fn rocket() -> _ {
     rocket::build()
         .attach(make_cors())
-        .mount("/api/led/", routes![on, off, toggle])
+        .mount("/api/led/", routes![on, off, toggle, get_status])
 }
