@@ -1,12 +1,8 @@
-use rocket::fs::FileServer;
-use rocket::{fs::relative, fs::NamedFile, *};
+use rocket::http::Method;
+use rocket::*;
+use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
 
 static mut LED_STATUS: bool = false;
-
-#[get("/")]
-async fn home() -> Option<NamedFile> {
-    NamedFile::open("./static/index.html").await.ok()
-}
 
 #[post("/on")]
 fn on() -> &'static str {
@@ -37,10 +33,30 @@ fn get_status() -> String {
     unsafe { format!("{}", LED_STATUS) }
 }
 
+fn make_cors() -> Cors {
+    let allowed_origins = AllowedOrigins::some_exact(&["http://localhost", "http://127.0.0.1"]);
+
+    CorsOptions {
+        allowed_origins,
+        allowed_methods: vec![Method::Get, Method::Post]
+            .into_iter()
+            .map(From::from)
+            .collect(),
+        allowed_headers: AllowedHeaders::some(&[
+            "Authorization",
+            "Accept",
+            "Access-Control-Allow-Origin",
+        ]),
+        allow_credentials: true,
+        ..Default::default()
+    }
+    .to_cors()
+    .expect("Couldn't Build CORS")
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![home])
-        .mount("/static", FileServer::from(relative!("static")))
+        .attach(make_cors())
         .mount("/api/led/", routes![on, off, toggle])
 }
