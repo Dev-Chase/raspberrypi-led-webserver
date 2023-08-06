@@ -34,7 +34,7 @@ fn get_status() -> String {
 }
 
 fn make_cors() -> Cors {
-    let allowed_origins = AllowedOrigins::some_exact(&["http://localhost", "http://127.0.0.1"]);
+    let allowed_origins = AllowedOrigins::all();
 
     CorsOptions {
         allowed_origins,
