@@ -34,7 +34,6 @@
 	height: 4.5em;
 	width: 45%;
 	cursor: pointer;
-	color: pink;
 	font-size: 1.75em;
 }
 
@@ -44,17 +43,4 @@
 	justify-content: space-around;
 	align-items: center;
 }
-
-/*#btns > div {
-	width: 30%;
-	height: 4em;
-	font-size: 1.5em;
-
-}
-
-#btns > div:hover {
-	width: 35%;
-	height: 4.25em;
-	font-size: 1.7em;
-}*/
 
