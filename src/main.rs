@@ -1,14 +1,14 @@
-use rocket::fs::{relative, FileServer, NamedFile};
+// use rocket::fs::{relative, FileServer, NamedFile};
 use rocket::http::Method;
 use rocket::*;
 use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
 
 static mut LED_STATUS: bool = false;
 
-#[get("/")]
-async fn home() -> Option<NamedFile> {
-    NamedFile::open("./static/index.html").await.ok()
-}
+// #[get("/")]
+// async fn home() -> Option<NamedFile> {
+//     NamedFile::open("./static/index.html").await.ok()
+// }
 
 #[post("/on")]
 fn on() -> &'static str {
@@ -64,7 +64,7 @@ fn make_cors() -> Cors {
 fn rocket() -> _ {
     rocket::build()
         .attach(make_cors())
-        .mount("/static", FileServer::from(relative!("static")))
-        .mount("/", routes![home])
-        .mount("/api/led/", routes![on, off, toggle, get_status])
+        // .mount("/static", FileServer::from(relative!("static")))
+        // .mount("/", routes![home])
+        .mount("/led", routes![on, off, toggle, get_status])
 }
