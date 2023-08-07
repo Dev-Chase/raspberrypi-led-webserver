@@ -11,7 +11,6 @@ $(function(){
     });
 
     setInterval(() => {
-        console.log("happneing");
         $.get("/api/led/status", status => {
           led_on = status;
           $("#content").css("background-color", colours[status]);
