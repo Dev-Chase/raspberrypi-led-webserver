@@ -14,6 +14,8 @@ $(function(){
         $.get("/api/led/status", status => {
           led_on = status;
           $("#content").css("background-color", colours[status]);
+        }).fail(_ => {
+            $("#content").css("background-color", "white");
         });
     }, 5000);
 
