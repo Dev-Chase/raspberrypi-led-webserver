@@ -5,7 +5,6 @@ use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
 use rppal::gpio::{ Gpio, OutputPin };
 use std::sync::Mutex;
 
-static mut LED_STATUS: bool = false;
 
 // #[get("/")]
 // async fn home() -> Option<NamedFile> {
@@ -15,27 +14,24 @@ static mut LED_STATUS: bool = false;
 #[post("/on")]
 fn on(led_pin: &State<Mutex<OutputPin>>) -> &'static str {
     led_pin.lock().unwrap().set_high();
-    unsafe { LED_STATUS = true; }
     "true"
 }
 
 #[post("/off")]
 fn off(led_pin: &State<Mutex<OutputPin>>) -> &'static str {
     led_pin.lock().unwrap().set_low();
-    unsafe { LED_STATUS = false; }
     "false"
 }
 
 #[post("/toggle")]
 fn toggle(led_pin: &State<Mutex<OutputPin>>) -> String {
     led_pin.lock().unwrap().toggle();
-    unsafe { LED_STATUS = !LED_STATUS; }
     get_status()
 }
 
 #[get("/status")]
-fn get_status() -> String {
-    unsafe { format!("{}", LED_STATUS) }
+fn get_status(led_pin: &State<Mutex<OutputPin>>) -> String {
+    led_pin.lock().unwrap().is_set_high()
 }
 
 fn make_cors() -> Cors {
