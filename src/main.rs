@@ -2,35 +2,35 @@
 use rocket::http::Method;
 use rocket::*;
 use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
+use rppal::gpio::{ Gpio, OutputPin };
+use std::sync::Mutex;
 
 static mut LED_STATUS: bool = false;
 
+const GPIO: Gpio = Gpio::new().unwrap();
 // #[get("/")]
 // async fn home() -> Option<NamedFile> {
 //     NamedFile::open("./static/index.html").await.ok()
 // }
 
 #[post("/on")]
-fn on() -> &'static str {
-    unsafe {
-        LED_STATUS = true;
-    }
+fn on(led_pin: &State<Mutex<OutputPin>>) -> &'static str {
+    led_pin.lock().unwrap().set_high();
+    unsafe { LED_STATUS = true; }
     "true"
 }
 
 #[post("/off")]
-fn off() -> &'static str {
-    unsafe {
-        LED_STATUS = false;
-    }
+fn off(led_pin: &State<Mutex<OutputPin>>) -> &'static str {
+    led_pin.lock().unwrap().set_low();
+    unsafe { LED_STATUS = false; }
     "false"
 }
 
 #[post("/toggle")]
-fn toggle() -> String {
-    unsafe {
-        LED_STATUS = !LED_STATUS;
-    }
+fn toggle(led_pin: &State<Mutex<OutputPin>>) -> String {
+    led_pin.lock().unwrap().toggle();
+    unsafe { LED_STATUS = !LED_STATUS; }
     get_status()
 }
 
@@ -62,7 +62,10 @@ fn make_cors() -> Cors {
 
 #[launch]
 fn rocket() -> _ {
+    let gpio: Gpio = Gpio::new().unwrap();
+    let led_pin: Mutex<OutputPin> = Mutex::new(gpio.get(18).unwrap().into_output());
     rocket::build()
+        .manage(led_pin)
         .attach(make_cors())
         // .mount("/static", FileServer::from(relative!("static")))
         // .mount("/", routes![home])
