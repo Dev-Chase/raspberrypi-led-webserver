@@ -31,7 +31,7 @@ fn toggle(led_pin: &State<Mutex<OutputPin>>) -> String {
 
 #[get("/status")]
 fn get_status(led_pin: &State<Mutex<OutputPin>>) -> String {
-    led_pin.lock().unwrap().is_set_high()
+    led_pin.lock().unwrap().is_set_high().to_string()
 }
 
 fn make_cors() -> Cors {
