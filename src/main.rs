@@ -7,7 +7,6 @@ use std::sync::Mutex;
 
 static mut LED_STATUS: bool = false;
 
-const GPIO: Gpio = Gpio::new().unwrap();
 // #[get("/")]
 // async fn home() -> Option<NamedFile> {
 //     NamedFile::open("./static/index.html").await.ok()
