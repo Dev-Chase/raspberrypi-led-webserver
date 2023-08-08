@@ -26,7 +26,7 @@ fn off(led_pin: &State<Mutex<OutputPin>>) -> &'static str {
 #[post("/toggle")]
 fn toggle(led_pin: &State<Mutex<OutputPin>>) -> String {
     led_pin.lock().unwrap().toggle();
-    get_status()
+    led_pin.lock().unwrap().is_set_high().to_string()
 }
 
 #[get("/status")]
